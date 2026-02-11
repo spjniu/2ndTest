@@ -3,7 +3,7 @@ name: Periodic Data Collection Pipeline
 on:
   schedule:
     - cron: '*/5 * * * *'
-  workflow_dispatch:        
+  workflow_dispatch:
 
 jobs:
   collect-and-update:
@@ -21,8 +21,8 @@ jobs:
           CURRENT_MIN=$(date +%M)
           TARGET_ID=$((10#$CURRENT_MIN + 1))
           echo "Current Minute: $CURRENT_MIN, Fetching ID: $TARGET_ID"
-          curl -s "https://jsonplaceholder.com/todos/$TARGET_ID" >> "서정인_test.json"
-          
+          # URL 오타 수정: jsonplaceholder.typicode.com
+          curl -s "https://jsonplaceholder.typicode.com/todos/$TARGET_ID" >> "서정인_test.json"
           echo "" >> "서정인_test.json"
 
       - name: Commit and Push Changes
