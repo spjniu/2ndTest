@@ -43,49 +43,4 @@ jobs:
           else
             git commit -m "Data Update via /tmp: ID $TARGET_ID at $(date +'%Y-%m-%d %H:%M:%S')"
             git push
-          finame: Data Collection Pipeline
-
-on:
-  push:
-    branches:
-      - main
-  schedule:
-    - cron: '*/5 * * * *'
-  workflow_dispatch:
-
-jobs:
-  collect-and-update:
-    runs-on: ubuntu-latest
-    
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Fetch Data and Save to /tmp
-        run: |
-          CURRENT_MIN=$(date +%M)
-          TARGET_ID=$((10#$CURRENT_MIN + 1))
-          
-          [ -f "서정인_test.json" ] && cp "서정인_test.json" "/tmp/서정인_test.json"
-          
-          curl -s "https://jsonplaceholder.typicode.com/todos/$TARGET_ID" >> "/tmp/서정인_test.json"
-          echo "" >> "/tmp/서정인_test.json"
-          
-          cp "/tmp/서정인_test.json" .
-
-      - name: Commit and Push Changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          git add "서정인_test.json"
-          
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Data Update via /tmp: ID $TARGET_ID at $(date +'%Y-%m-%d %H:%M:%S')"
-            git push
           fi
