@@ -18,29 +18,37 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Fetch Data and Save to /tmp
         run: |
           CURRENT_MIN=$(date +%M)
           TARGET_ID=$((10#$CURRENT_MIN + 1))
           
-          [ -f "서정인_test.json" ] && cp "서정인_test.json" "/tmp/서정인_test.json"
+          if [ -f "서정인_test.json" ]; then
+            cp "서정인_test.json" "/tmp/서정인_test.json"
+          else
+            touch "/tmp/서정인_test.json"
+          fi
           
           curl -s "https://jsonplaceholder.typicode.com/todos/$TARGET_ID" >> "/tmp/서정인_test.json"
           echo "" >> "/tmp/서정인_test.json"
           
-          cp "/tmp/서정인_test.json" .
+          cp "/tmp/서정인_test.json" "서정인_test.json"
 
       - name: Commit and Push Changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
+          git pull origin main
+          
           git add "서정인_test.json"
           
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Data Update via /tmp: ID $TARGET_ID at $(date +'%Y-%m-%d %H:%M:%S')"
+            git commit -m "Data Update ID $TARGET_ID"
             git push
           fi
